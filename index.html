@@ -2,104 +2,246 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Interactive Org Chart</title>
+  <title>Shinsengumi Org Chart</title>
   <style>
+    body {
+      background: #f3f6fa;
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Liberation Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .org-container {
+      max-width: 1050px;
+      margin: 0 auto;
+      padding: 40px 10px;
+    }
+    .top-leaders {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      margin-bottom: 48px;
+    }
     .org-node {
-      border: 1px solid #888;
-      padding: 8px 16px;
-      margin: 8px;
-      display: inline-block;
       background: #f9f9f9;
-      cursor: pointer;
-      border-radius: 4px;
+      border: 2px solid #39577a;
+      border-radius: 10px;
+      padding: 22px 38px;
+      font-weight: bold;
+      font-size: 1.18em;
+      text-align: center;
+      color: #28415c;
+      box-shadow: 0 2px 10px #0001;
     }
-    .children {
-      margin-left: 40px;
-      display: none;
-    }
-    .expanded > .children {
+    .org-node span {
       display: block;
+      font-weight: normal;
+      font-size: 0.97em;
+      color: #60748a;
+      margin-top: 7px;
+    }
+    .divisions-inspectors {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+    .org-card {
+      width: 210px;
+      height: 130px;
+      perspective: 1200px;
+      position: relative;
+      margin-bottom: 24px;
+      cursor: pointer;
+      transition: transform 0.20s;
+    }
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      background: #fff;
+      border: 1.5px solid #39577a;
+      box-shadow: 0 4px 16px #0002;
+      backface-visibility: hidden;
+      transition: transform 0.7s cubic-bezier(.4,2,.5,.8), box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.04em;
+      padding: 18px 12px;
+    }
+    .card-front {
+      z-index: 2;
+      color: #254060;
+      font-weight: bold;
+    }
+    .card-front span {
+      font-size: 0.96em;
+      color: #60748a;
+      font-weight: normal;
+      margin-top: 6px;
+    }
+    .card-back {
+      transform: rotateY(180deg);
+      z-index: 1;
+      background: #f6fafd;
+      font-size: 0.99em;
+      color: #39577a;
+      font-weight: normal;
+      padding: 17px 10px;
+    }
+    .card-back ul {
+      margin: 0;
+      padding: 0 0 0 18px;
+      text-align: left;
+      font-size: 0.96em;
+    }
+    .org-card:hover {
+      z-index: 3;
+      transform: scale(1.12);
+    }
+    .org-card:hover .card-front {
+      transform: rotateY(180deg);
+    }
+    .org-card:hover .card-back {
+      transform: rotateY(0deg) scale(1.09);
+      box-shadow: 0 6px 28px #39577a33;
+    }
+    @media (max-width: 700px) {
+      .top-leaders { flex-direction: column; gap: 18px; }
+      .org-card { width: 98vw; max-width: 340px; }
+      .divisions-inspectors { gap: 16px; }
     }
   </style>
 </head>
 <body>
-  <div id="org-chart"></div>
-  <script>
-    // Sample org chart data
-    const data = {
-  name: "局長 (Kyokuchō) / Commander: Kondō Isami\nHome domain: Musashi\nSword Fighting School: Tennen Rishinryū",
-  children: [
-    {
-      name: "副長 (Fukuchō) / Vice-Commander: Hijikata Toshizō\nHome domain: Musashi\nSword Fighting School: Tennen Rishinryū",
-      children: [
-        {
-          name: "参謀 (Sanbō) / Staff Officer: Itō Kashitarō\nHome domain: Shizuku\nSword Fighting School: Shintō Munenryū"
-        },
-        {
-          name: "一番隊 (Ichiban-tai) / 1st Division: Okita Sōji\nHome domain: Edo (Shirakawa)\nSword Fighting School: Tennen Rishinryū"
-        },
-        {
-          name: "二番隊 (Niban-tai) / 2nd Division: Nagakura Shinpachi\nHome domain: Edo (Matsumae)\nSword Fighting School: Shintō Munenryū"
-        },
-        {
-          name: "三番隊 (Sanban-tai) / 3rd Division: Saitō Hajime\nHome domain: Edo\nSword Fighting School: Ittōryū"
-        },
-        {
-          name: "四番隊 (Yoban-tai) / 4th Division: Matsubara Chūji\nHome domain: Musashi\nSword Fighting School: Tennen Rishinryū"
-        },
-        {
-          name: "五番隊 (Goban-tai) / 5th Division: Takeda Kanryūsai\nHome domain: Izumo\nSword Fighting School: Hokushin Ittōryū"
-        },
-        {
-          name: "六番隊 (Rokuban-tai) / 6th Division: Inōe Genzaburō\nHome domain: Musashi\nSword Fighting School: Tennen Rishinryū"
-        },
-        {
-          name: "七番隊 (Nanaban-tai) / 7th Division: Tani Sanjūrō\nHome domain: Matsuyama\nSword Fighting School: Tyokushinryū\nSpear School: Taneda Hōzōinryū"
-        },
-        {
-          name: "八番隊 (Hachiban-tai) / 8th Division: Todō Heisuke\nHome domain: Edo\nSword Fighting School: Hokushin Ittōryū"
-        },
-        {
-          name: "九番隊 (Kyūban-tai) / 9th Division: Suzuki Mikisaburō\nHome domain: Shizuku\nSword Fighting School: Shintō Munenryū"
-        },
-        {
-          name: "十番隊 (Jūban-tai) / 10th Division: Harada Sanosuke\nHome domain: Matsuyama\nSpear Fighting School: Taneda Hōzōinryū"
-        }
-      ]
-    }
-  ]
-};
-
-    function createNode(nodeData) {
-      const node = document.createElement('div');
-      node.className = 'org-node';
-      node.textContent = nodeData.name;
-
-      if (nodeData.children && nodeData.children.length > 0) {
-        node.style.fontWeight = 'bold';
-        node.addEventListener('click', function(e) {
-          e.stopPropagation();
-          node.parentElement.classList.toggle('expanded');
-        });
-
-        const childrenContainer = document.createElement('div');
-        childrenContainer.className = 'children';
-        nodeData.children.forEach(child => {
-          const childWrapper = document.createElement('div');
-          childWrapper.appendChild(createNode(child));
-          childrenContainer.appendChild(childWrapper);
-        });
-
-        const wrapper = document.createElement('div');
-        wrapper.appendChild(node);
-        wrapper.appendChild(childrenContainer);
-        return wrapper;
-      } else {
-        return node;
-      }
-    }
-
-    document.getElementById('org-chart').appendChild(createNode(data));
-  </script>
+  <div class="org-container">
+    <div class="top-leaders">
+      <div class="org-node">
+        局長
+        <span>Commander: Kondō Isami<br>Home domain: Musashi<br>Sword School: Tennen Rishinryū</span>
+      </div>
+      <div class="org-node">
+        副長
+        <span>Vice-Commander: Hijikata Toshizō<br>Home domain: Musashi<br>Sword School: Tennen Rishinryū</span>
+      </div>
+    </div>
+    <div class="divisions-inspectors">
+      <!-- Inspectors -->
+      <div class="org-card">
+        <div class="card-front">
+          参謀<br><span>Staff Officer</span>
+        </div>
+        <div class="card-back">
+          <ul>
+            <li>Itō Kashitarō<br><span style="color:#60748a;font-size:0.93em;">Shizuku, Shintō Munenryū</span></li>
+          </ul>
+        </div>
+      </div>
+      <!-- Divisions 1-10 -->
+      <div class="org-card">
+        <div class="card-front">
+          一番隊<br><span>1st Division</span>
+        </div>
+        <div class="card-back">
+          <ul>
+            <li>Okita Sōji<br><span style="color:#60748a;font-size:0.93em;">Edo (Shirakawa), Tennen Rishinryū</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="org-card">
+        <div class="card-front">
+          二番隊<br><span>2nd Division</span>
+        </div>
+        <div class="card-back">
+          <ul>
+            <li>Nagakura Shinpachi<br><span style="color:#60748a;font-size:0.93em;">Edo (Matsumae), Shintō Munenryū</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="org-card">
+        <div class="card-front">
+          三番隊<br><span>3rd Division</span>
+        </div>
+        <div class="card-back">
+          <ul>
+            <li>Saitō Hajime<br><span style="color:#60748a;font-size:0.93em;">Edo, Ittōryū</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="org-card">
+        <div class="card-front">
+          四番隊<br><span>4th Division</span>
+        </div>
+        <div class="card-back">
+          <ul>
+            <li>Matsubara Chūji<br><span style="color:#60748a;font-size:0.93em;">Musashi, Tennen Rishinryū</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="org-card">
+        <div class="card-front">
+          五番隊<br><span>5th Division</span>
+        </div>
+        <div class="card-back">
+          <ul>
+            <li>Takeda Kanryūsai<br><span style="color:#60748a;font-size:0.93em;">Izumo, Hokushin Ittōryū</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="org-card">
+        <div class="card-front">
+          六番隊<br><span>6th Division</span>
+        </div>
+        <div class="card-back">
+          <ul>
+            <li>Inōe Genzaburō<br><span style="color:#60748a;font-size:0.93em;">Musashi, Tennen Rishinryū</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="org-card">
+        <div class="card-front">
+          七番隊<br><span>7th Division</span>
+        </div>
+        <div class="card-back">
+          <ul>
+            <li>Tani Sanjūrō<br><span style="color:#60748a;font-size:0.93em;">Matsuyama, Tyokushinryū (Spear: Taneda Hōzōinryū)</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="org-card">
+        <div class="card-front">
+          八番隊<br><span>8th Division</span>
+        </div>
+        <div class="card-back">
+          <ul>
+            <li>Todō Heisuke<br><span style="color:#60748a;font-size:0.93em;">Edo, Hokushin Ittōryū</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="org-card">
+        <div class="card-front">
+          九番隊<br><span>9th Division</span>
+        </div>
+        <div class="card-back">
+          <ul>
+            <li>Suzuki Mikisaburō<br><span style="color:#60748a;font-size:0.93em;">Shizuku, Shintō Munenryū</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="org-card">
+        <div class="card-front">
+          十番隊<br><span>10th Division</span>
+        </div>
+        <div class="card-back">
+          <ul>
+            <li>Harada Sanosuke<br><span style="color:#60748a;font-size:0.93em;">Matsuyama, Taneda Hōzōinryū (Spear)</span></li>
+          </ul>
+        </div>
+      </div>
+      <!-- Add more org-card blocks as needed for additional inspectors/divisions -->
+    </div>
+  </div>
 </body>
 </html>
