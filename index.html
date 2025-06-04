@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Interactive Org Chart</title>
+  <style>
+    .org-node {
+      border: 1px solid #888;
+      padding: 8px 16px;
+      margin: 8px;
+      display: inline-block;
+      background: #f9f9f9;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .children {
+      margin-left: 40px;
+      display: none;
+    }
+    .expanded > .children {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div id="org-chart"></div>
+  <script>
+    // Sample org chart data
+    const data = {
+  name: "局長 (Kyokuchō) / Commander: Kondō Isami\nHome domain: Musashi\nSword Fighting School: Tennen Rishinryū",
+  children: [
+    {
+      name: "副長 (Fukuchō) / Vice-Commander: Hijikata Toshizō\nHome domain: Musashi\nSword Fighting School: Tennen Rishinryū",
+      children: [
+        {
+          name: "参謀 (Sanbō) / Staff Officer: Itō Kashitarō\nHome domain: Shizuku\nSword Fighting School: Shintō Munenryū"
+        },
+        {
+          name: "一番隊 (Ichiban-tai) / 1st Division: Okita Sōji\nHome domain: Edo (Shirakawa)\nSword Fighting School: Tennen Rishinryū"
+        },
+        {
+          name: "二番隊 (Niban-tai) / 2nd Division: Nagakura Shinpachi\nHome domain: Edo (Matsumae)\nSword Fighting School: Shintō Munenryū"
+        },
+        {
+          name: "三番隊 (Sanban-tai) / 3rd Division: Saitō Hajime\nHome domain: Edo\nSword Fighting School: Ittōryū"
+        },
+        {
+          name: "四番隊 (Yoban-tai) / 4th Division: Matsubara Chūji\nHome domain: Musashi\nSword Fighting School: Tennen Rishinryū"
+        },
+        {
+          name: "五番隊 (Goban-tai) / 5th Division: Takeda Kanryūsai\nHome domain: Izumo\nSword Fighting School: Hokushin Ittōryū"
+        },
+        {
+          name: "六番隊 (Rokuban-tai) / 6th Division: Inōe Genzaburō\nHome domain: Musashi\nSword Fighting School: Tennen Rishinryū"
+        },
+        {
+          name: "七番隊 (Nanaban-tai) / 7th Division: Tani Sanjūrō\nHome domain: Matsuyama\nSword Fighting School: Tyokushinryū\nSpear School: Taneda Hōzōinryū"
+        },
+        {
+          name: "八番隊 (Hachiban-tai) / 8th Division: Todō Heisuke\nHome domain: Edo\nSword Fighting School: Hokushin Ittōryū"
+        },
+        {
+          name: "九番隊 (Kyūban-tai) / 9th Division: Suzuki Mikisaburō\nHome domain: Shizuku\nSword Fighting School: Shintō Munenryū"
+        },
+        {
+          name: "十番隊 (Jūban-tai) / 10th Division: Harada Sanosuke\nHome domain: Matsuyama\nSpear Fighting School: Taneda Hōzōinryū"
+        }
+      ]
+    }
+  ]
+};
+
+    function createNode(nodeData) {
+      const node = document.createElement('div');
+      node.className = 'org-node';
+      node.textContent = nodeData.name;
+
+      if (nodeData.children && nodeData.children.length > 0) {
+        node.style.fontWeight = 'bold';
+        node.addEventListener('click', function(e) {
+          e.stopPropagation();
+          node.parentElement.classList.toggle('expanded');
+        });
+
+        const childrenContainer = document.createElement('div');
+        childrenContainer.className = 'children';
+        nodeData.children.forEach(child => {
+          const childWrapper = document.createElement('div');
+          childWrapper.appendChild(createNode(child));
+          childrenContainer.appendChild(childWrapper);
+        });
+
+        const wrapper = document.createElement('div');
+        wrapper.appendChild(node);
+        wrapper.appendChild(childrenContainer);
+        return wrapper;
+      } else {
+        return node;
+      }
+    }
+
+    document.getElementById('org-chart').appendChild(createNode(data));
+  </script>
+</body>
+</html>
