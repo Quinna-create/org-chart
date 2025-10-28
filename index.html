@@ -46,11 +46,11 @@
       font-family:'Noto Serif JP',serif;
     }
 
-    /* top leaders */
+    /* top leaders - removed gold border */
     .top-leaders{display:flex;justify-content:center;gap:36px;flex-wrap:wrap;margin-bottom:22px;}
     .org-node{
       background:linear-gradient(180deg,var(--card-bg-1),var(--card-bg-2));
-      border:2px solid var(--gold);
+      border: none; /* removed gold border */
       border-radius:12px;
       padding:12px 18px;
       text-align:center;
@@ -61,21 +61,21 @@
     .org-node .jp{font-family:'Noto Serif JP',serif;color:var(--gold);font-weight:700;font-size:1.05em;}
     .org-node .meta{color:var(--gold-2);font-weight:600;margin-top:6px;font-size:0.9em;}
 
-    /* grid of cards - increased gap significantly to prevent overlap and keep text readable */
+    /* grid of cards - reduced card width and increased gap significantly to achieve ~20% overlap */
     .divisions-inspectors{
       display:grid;
-      grid-template-columns: repeat(auto-fit,minmax(170px,1fr));
-      gap:28px; /* increased gap to reduce overlap and keep front text visible */
+      grid-template-columns: repeat(auto-fit,minmax(145px,1fr)); /* reduced from 170px */
+      gap:38px; /* increased gap further to reduce overlap to ~20% */
       align-items:start;
       justify-items:center;
       width:100%;
-      padding: 0 10px; /* added horizontal padding to give more breathing room */
+      padding: 0 15px; /* increased horizontal padding */
     }
 
-    /* card base to match timeline event cards */
+    /* card base - reduced width */
     .org-card{
-      width: 170px;
-      min-height: 92px;
+      width: 145px; /* reduced from 170px */
+      min-height: 88px; /* slightly reduced height proportionally */
       position:relative;
       cursor:pointer;
       border-radius:12px;
@@ -84,28 +84,29 @@
       -webkit-tap-highlight-color: transparent;
       margin: 0;
     }
-    /* minimal hover effect to avoid covering adjacent cards */
-    .org-card:hover{transform:translateY(-3px) scale(1.005); z-index:12;}
+    /* minimal hover effect but card back will scale larger */
+    .org-card:hover{transform:translateY(-3px); z-index:12;}
 
     /* front/back stacked; "dissolve" effect */
     .card-front, .card-back {
       position:absolute;
-      left:0;top:0;width:100%;height:100%;
+      left:0;top:0;
       border-radius:12px;
       overflow:hidden;
       box-sizing:border-box;
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:10px;
       transition:opacity 420ms cubic-bezier(.2,.9,.2,1), transform 420ms cubic-bezier(.2,.9,.2,1), filter 420ms;
       backface-visibility:hidden;
       -webkit-backface-visibility:hidden;
       -moz-osx-font-smoothing:grayscale;
     }
 
-    /* front style now uses the parchment-like textured background (like the timeline year labels) */
+    /* front is normal card size */
     .card-front{
+      width:100%;
+      height:100%;
       background:
         linear-gradient(135deg, rgba(243,233,210,0.98) 60%, rgba(191,174,142,0.98) 100%),
         var(--parchment-url);
@@ -118,31 +119,35 @@
       text-align:center;
       flex-direction:column;
       letter-spacing:0.02em;
-      padding:12px 10px;
-      min-height: 84px;
+      padding:10px 8px; /* reduced padding slightly */
+      min-height: 80px;
     }
-    .card-front .jp{font-family:'Noto Serif JP',serif;font-weight:700;font-size:1.02rem;margin-bottom:4px;color:#8c7e58;}
-    .card-front .small{font-family:'Roboto',sans-serif;color:var(--gold-2);font-weight:600;font-size:0.86rem;}
+    .card-front .jp{font-family:'Noto Serif JP',serif;font-weight:700;font-size:0.96rem;margin-bottom:4px;color:#8c7e58;} /* slightly smaller font */
+    .card-front .small{font-family:'Roboto',sans-serif;color:var(--gold-2);font-weight:600;font-size:0.82rem;} /* slightly smaller font */
 
-    /* back is hidden by default; contains a semi-transparent background panel (.back-panel) and content (.back-content) */
+    /* back is larger than front to display all info clearly */
     .card-back{
+      width: 190px; /* 30% larger than front */
+      height: 140px; /* taller to accommodate all info */
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) translateY(6px) scale(.95);
       z-index:2;
       opacity:0;
-      transform: translateY(6px) scale(.995);
       pointer-events:none;
     }
     .back-panel{
       position:absolute;inset:0;
-      background: rgba(20,20,20,0.56); /* semi-transparent panel behind the back content */
+      background: rgba(20,20,20,0.88); /* slightly more opaque for better readability */
       border-radius:12px;
-      border:1px solid rgba(187,161,79,0.09);
-      backdrop-filter: blur(4px) saturate(.95);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 2px 6px rgba(187,161,79,0.04) inset;
+      border:1.5px solid rgba(187,161,79,0.3);
+      backdrop-filter: blur(6px) saturate(.95);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.8), 0 2px 8px rgba(187,161,79,0.08) inset;
     }
     .back-content{
       position:relative;
       z-index:3;
-      padding:10px 12px;
+      padding:12px 14px; /* increased padding for larger card */
       color:#fff;
       text-align:left;
       width:100%;
@@ -152,28 +157,31 @@
       justify-content:center;
       gap:6px;
       font-family:'Roboto',sans-serif;
-      font-size:0.88rem;
-      line-height:1.15;
+      font-size:0.88rem; /* larger font for readability */
+      line-height:1.2;
     }
-    .back-content .name{font-weight:700;color:var(--gold);font-family:'Noto Serif JP',serif;}
-    .back-content .meta{color:var(--gold-2);font-weight:600;font-size:0.86rem;}
+    .back-content .name{font-weight:700;color:var(--gold);font-family:'Noto Serif JP',serif;font-size:0.92rem;}
+    .back-content .meta{color:var(--gold-2);font-weight:600;font-size:0.84rem;line-height:1.3;}
     .back-content .meta .label{display:inline-block;color:#c9d7e4;font-weight:700;margin-right:6px;font-size:0.82rem;color:var(--gold-2);}
 
-    /* hover triggers dissolve: front fades/blur, back fades in on its panel */
+    /* hover triggers dissolve: front fades/blur, back scales up and fades in */
     .org-card:hover .card-front{
       opacity:0;
-      transform: translateY(-3px) scale(.99);
-      filter: blur(2px) saturate(.9);
+      transform: translateY(-3px) scale(.96);
+      filter: blur(3px) saturate(.85);
       pointer-events:none;
     }
     .org-card:hover .card-back{
       opacity:1;
-      transform: translateY(0) scale(1);
+      transform: translate(-50%, -50%) scale(1); /* centered and full scale */
       pointer-events:auto;
     }
 
-    /* crowded backs smaller */
-    .card-back.inspectors-crowded .back-content{font-size:0.78rem;line-height:1.05;}
+    /* crowded backs with more space */
+    .card-back.inspectors-crowded {
+      height: 170px; /* even taller for two people */
+    }
+    .card-back.inspectors-crowded .back-content{font-size:0.82rem;line-height:1.18;gap:5px;}
 
     /* responsive: for small screens let content flow vertically and allow scrolling */
     @media (max-width:700px){
@@ -182,6 +190,8 @@
       .org-card{width:92vw;max-width:340px;min-height:86px;}
       .org-node{min-width:unset;width:92vw;max-width:560px;}
       .org-card:hover{transform:none;}
+      .card-back{width:96vw;max-width:360px;height:auto;min-height:160px;}
+      .card-back.inspectors-crowded{height:auto;min-height:200px;}
       .card-front{background:
         linear-gradient(135deg, rgba(243,233,210,0.95) 60%, rgba(191,174,142,0.95) 100%),
         var(--parchment-url);
@@ -228,8 +238,8 @@
           <div class="back-panel"></div>
           <div class="back-content">
             <div class="name">Itō Kashitarō</div>
-            <div class="meta"><span class="label">Hometown</span>Shizuku</div>
-            <div class="meta"><span class="label">Sword school</span>Shintō Munenryū</div>
+            <div class="meta"><span class="label">Hometown:</span>Shizuku</div>
+            <div class="meta"><span class="label">Sword school:</span>Shintō Munenryū</div>
           </div>
         </div>
       </div>
@@ -244,12 +254,12 @@
           <div class="back-panel"></div>
           <div class="back-content">
             <div class="name">Yamazaki Susumu</div>
-            <div class="meta"><span class="label">Hometown</span>Musashi</div>
-            <div class="meta"><span class="label">Sword school</span>Kyōshin Meichi</div>
-            <hr style="opacity:.06;margin:8px 0;border:none;height:1px;background:#fff">
+            <div class="meta"><span class="label">Hometown:</span>Musashi</div>
+            <div class="meta"><span class="label">Sword school:</span>Kyōshin Meichi</div>
+            <hr style="opacity:.12;margin:8px 0;border:none;height:1px;background:#bba14f">
             <div class="name">Shinohara Tainoshin</div>
-            <div class="meta"><span class="label">Hometown</span>Ukiha</div>
-            <div class="meta"><span class="label">Sword school</span>Hokushin / Ryōishintō (jū-jutsu)</div>
+            <div class="meta"><span class="label">Hometown:</span>Ukiha</div>
+            <div class="meta"><span class="label">Sword school:</span>Hokushin / Ryōishintō (jū-jutsu)</div>
           </div>
         </div>
       </div>
@@ -264,8 +274,8 @@
           <div class="back-panel"></div>
           <div class="back-content">
             <div class="name">Corporal Okita Sōji</div>
-            <div class="meta"><span class="label">Hometown</span>Edo (family from Shirakawa)</div>
-            <div class="meta"><span class="label">Sword school</span>Tennen Rishinryū</div>
+            <div class="meta"><span class="label">Hometown:</span>Edo (family from Shirakawa)</div>
+            <div class="meta"><span class="label">Sword school:</span>Tennen Rishinryū</div>
           </div>
         </div>
       </div>
@@ -280,8 +290,8 @@
           <div class="back-panel"></div>
           <div class="back-content">
             <div class="name">Corporal Nagakura Shinpachi</div>
-            <div class="meta"><span class="label">Hometown</span>Edo (Matsumae)</div>
-            <div class="meta"><span class="label">Sword school</span>Shintō Munenryū</div>
+            <div class="meta"><span class="label">Hometown:</span>Edo (Matsumae)</div>
+            <div class="meta"><span class="label">Sword school:</span>Shintō Munenryū</div>
           </div>
         </div>
       </div>
@@ -296,8 +306,8 @@
           <div class="back-panel"></div>
           <div class="back-content">
             <div class="name">Corporal Saitō Hajime</div>
-            <div class="meta"><span class="label">Hometown</span>Edo</div>
-            <div class="meta"><span class="label">Sword school</span>Ittōryū</div>
+            <div class="meta"><span class="label">Hometown:</span>Edo</div>
+            <div class="meta"><span class="label">Sword school:</span>Ittōryū</div>
           </div>
         </div>
       </div>
@@ -312,8 +322,8 @@
           <div class="back-panel"></div>
           <div class="back-content">
             <div class="name">Corporal Matsubara Chūji</div>
-            <div class="meta"><span class="label">Hometown</span>Musashi</div>
-            <div class="meta"><span class="label">Sword school</span>Tennen Rishinryū</div>
+            <div class="meta"><span class="label">Hometown:</span>Musashi</div>
+            <div class="meta"><span class="label">Sword school:</span>Tennen Rishinryū</div>
           </div>
         </div>
       </div>
@@ -328,8 +338,8 @@
           <div class="back-panel"></div>
           <div class="back-content">
             <div class="name">Corporal Takeda Kanryūsai</div>
-            <div class="meta"><span class="label">Hometown</span>Izumo</div>
-            <div class="meta"><span class="label">Sword school</span>Hokushin Ittōryū</div>
+            <div class="meta"><span class="label">Hometown:</span>Izumo</div>
+            <div class="meta"><span class="label">Sword school:</span>Hokushin Ittōryū</div>
           </div>
         </div>
       </div>
@@ -344,8 +354,8 @@
           <div class="back-panel"></div>
           <div class="back-content">
             <div class="name">Corporal Inōe Genzaburō</div>
-            <div class="meta"><span class="label">Hometown</span>Musashi</div>
-            <div class="meta"><span class="label">Sword school</span>Tennen Rishinryū</div>
+            <div class="meta"><span class="label">Hometown:</span>Musashi</div>
+            <div class="meta"><span class="label">Sword school:</span>Tennen Rishinryū</div>
           </div>
         </div>
       </div>
@@ -360,8 +370,8 @@
           <div class="back-panel"></div>
           <div class="back-content">
             <div class="name">Corporal Tani Sanjūrō</div>
-            <div class="meta"><span class="label">Hometown</span>Matsuyama</div>
-            <div class="meta"><span class="label">Sword school</span>Tyokushinryū • Taneda Hōzōinryū (spear)</div>
+            <div class="meta"><span class="label">Hometown:</span>Matsuyama</div>
+            <div class="meta"><span class="label">Sword school:</span>Tyokushinryū • Taneda Hōzōinryū (spear)</div>
           </div>
         </div>
       </div>
@@ -376,8 +386,8 @@
           <div class="back-panel"></div>
           <div class="back-content">
             <div class="name">Corporal Todō Heisuke</div>
-            <div class="meta"><span class="label">Hometown</span>Edo</div>
-            <div class="meta"><span class="label">Sword school</span>Hokushin Ittōryū</div>
+            <div class="meta"><span class="label">Hometown:</span>Edo</div>
+            <div class="meta"><span class="label">Sword school:</span>Hokushin Ittōryū</div>
           </div>
         </div>
       </div>
@@ -392,8 +402,8 @@
           <div class="back-panel"></div>
           <div class="back-content">
             <div class="name">Corporal Suzuki Mikisaburō</div>
-            <div class="meta"><span class="label">Hometown</span>Shizuku</div>
-            <div class="meta"><span class="label">Sword school</span>Shintō Munenryū</div>
+            <div class="meta"><span class="label">Hometown:</span>Shizuku</div>
+            <div class="meta"><span class="label">Sword school:</span>Shintō Munenryū</div>
           </div>
         </div>
       </div>
@@ -408,8 +418,8 @@
           <div class="back-panel"></div>
           <div class="back-content">
             <div class="name">Corporal Harada Sanosuke</div>
-            <div class="meta"><span class="label">Hometown</span>Iyo-Matsuyama</div>
-            <div class="meta"><span class="label">Sword school</span>Taneda Hōzōinryū (spear)</div>
+            <div class="meta"><span class="label">Hometown:</span>Iyo-Matsuyama</div>
+            <div class="meta"><span class="label">Sword school:</span>Taneda Hōzōinryū (spear)</div>
           </div>
         </div>
       </div>
