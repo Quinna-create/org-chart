@@ -177,11 +177,12 @@
       pointer-events:auto;
     }
 
-    /* crowded backs with more space */
+    /* crowded backs with more space - SIGNIFICANTLY WIDER for inspector card */
     .card-back.inspectors-crowded {
-      height: 170px; /* even taller for two people */
+      width: 250px; /* increased from 220px to 250px for plenty of room */
+      height: 180px; /* also increased height slightly for comfort */
     }
-    .card-back.inspectors-crowded .back-content{font-size:0.82rem;line-height:1.18;gap:5px;}
+    .card-back.inspectors-crowded .back-content{font-size:0.82rem;line-height:1.2;gap:5px;padding:14px 16px;} /* added more padding */
 
     /* responsive: for small screens let content flow vertically and allow scrolling */
     @media (max-width:700px){
@@ -191,7 +192,7 @@
       .org-node{min-width:unset;width:92vw;max-width:560px;}
       .org-card:hover{transform:none;}
       .card-back{width:96vw;max-width:360px;height:auto;min-height:160px;}
-      .card-back.inspectors-crowded{height:auto;min-height:200px;}
+      .card-back.inspectors-crowded{width:96vw;max-width:400px;height:auto;min-height:220px;}
       .card-front{background:
         linear-gradient(135deg, rgba(243,233,210,0.95) 60%, rgba(191,174,142,0.95) 100%),
         var(--parchment-url);
